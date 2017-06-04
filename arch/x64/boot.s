@@ -65,4 +65,4 @@ start32:
 
 .code64
 start64:
-	 jmp start64
+	 jmp main 
