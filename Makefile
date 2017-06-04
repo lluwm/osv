@@ -5,3 +5,7 @@ loader.bin: loader.elf
 
 loader.elf: arch/x64/boot.o arch/x64/loader.ld loader.o
 	 $(CXX) -nostartfiles -static -nodefaultlibs -o $@ $^
+
+clean:
+	 find -name '*.[od]' | xargs rm
+	 rm -f loader.elf loader.bin
