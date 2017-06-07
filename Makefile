@@ -23,4 +23,7 @@ clean:
 	 rm -f loader.elf loader.bin
 
 qemu:
-	 qemu-system-x86_64 -kernel loader.bin -serial mon:stdio -gdb tcp::26000 -S
+	 qemu-system-x86_64 -kernel loader.bin -serial mon:stdio -gdb tcp::26000 -S -no-shutdown -no-reboot -d int
+
+qemu-run:
+	 qemu-system-x86_64 -kernel loader.bin
