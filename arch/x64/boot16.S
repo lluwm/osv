@@ -64,6 +64,9 @@ read_disk:
     # All interrupts work in real mode will not be available in protected mode
     cli
 
+	 # load global descriptor table.
+	 lgdtw gdt
+
 	 # Switch to protected mode.
     mov $0x11, %ax
     lmsw %ax
@@ -89,7 +92,8 @@ read_disk:
 1:
 	 .code16
 	 # Switch back to real mode to do another disk read !!
-	 mov 0x10, %eax
+	 mov %cr0, %eax
+	 and 0xfe, %al    # clear PE
 	 mov %eax, %cr0
 	 # Jump to flush the instruction queue
 	 ljmpw $0, $1f

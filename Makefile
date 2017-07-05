@@ -22,7 +22,7 @@ MULTIROOT := $(shell if grub-file --is-x86-multiboot loader.bin; \
 								echo the file is not multiboot; \
 						   fi;)
 
-arch/x64/%.o: arch/x64/%.s
+arch/x64/%.o: arch/x64/%.S
 	 $(CC) $(KERN_CFLAGS) -g -c -o $@ $<
 
 check:
@@ -33,7 +33,7 @@ clean:
 	 rm -f loader.elf loader.bin loader.img boot.bin
 
 qemu:
-	 qemu-system-x86_64 -kernel loader.bin -serial mon:stdio -gdb tcp::26000 -S -no-shutdown -no-reboot -d int
+	 qemu-system-x86_64 -hda loader.img -serial mon:stdio -gdb tcp::26000 -S -no-shutdown -no-reboot -d int
 
 qemu-run:
-	 qemu-system-x86_64 -kernel loader.bin
+	 qemu-system-x86_64 -hda loader.img -no-reboot -d int
