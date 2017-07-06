@@ -51,7 +51,9 @@ init:
     mov %ax, %ds
     mov %ax, %es
     mov %ax, %ss
-    mov $tmp, %sp
+    mov $0x7c00, %sp
+    mov $0x2401, %ax # enable a20 gate
+    int $0x15
 
 read_disk:
     # read 32KB starting from sector $lba to 0x8000
