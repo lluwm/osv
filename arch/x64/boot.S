@@ -30,25 +30,28 @@ ident_pt_l2: #PDE entry
 	 .endr
 
 gdt_desc:
-	 .short 0x1f    #0x1f=31 (4 global descriptors).
-	 .long gdt - 8  #
+	 .short gdt_end - gdt - 1
+	 .long gdt
 
 .align 8
-gdt:
+gdt = . - 8
 	 .quad 0x00af9b000000ffff #64-bit code segment
 	 .quad 0x00cf93000000ffff #64-bit data segment
 	 .quad 0x00cf9b000000ffff #32-bit code segment
+gdt_end = .
 
 .text
 .globl start32
 start32:
+     mov  %eax, %ebp
+check:
 	 lgdt gdt_desc
-	 mov $0x10, %eax #Segment Selector points to 64-bit code segment.
-	 mov %eax, %ds
-	 mov %eax, %es
-	 mov %eax, %fs
-	 mov %eax, %gs
-	 mov %eax, %ss
+	 movw $0x10, %ax #Segment Selector points to 64-bit code segment.
+	 movw %ax, %ds
+	 movw %ax, %es
+	 movw %ax, %fs
+	 movw %ax, %gs
+	 movw %ax, %ss
 	 ljmp $0x18, $1f #Use segment selecotr=0x18(32-bit code segment) to jump to label 1.
 1:
 	 mov $0x000007b8, %eax
