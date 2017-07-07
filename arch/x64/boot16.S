@@ -3,7 +3,8 @@
 tmp = 0x8000        # 1KB away from 0x7c00
 bootsect = 0x7c00
 target = 0x200000
-entry = 24 + target # 0x200018
+#entry = 24 + target # 0x200018
+entry = 0x200030 # 0x200030 is the addr of 'start32'
 
 mb_info = 0x1000
 mb_mmap_len = (mb_info + 44)  # mb length  info is at location: 0x102c
@@ -28,7 +29,9 @@ int1342_struct:
     .short 0x00 #transfer buffer (16bit segment)
     .short tmp / 16 #(16bit offset)
 lba:
-    .quad  128 #starting LBA number
+    .quad  4224 #starting LBA number
+	 # 4224 is the LBA number corresponding to 0x210000 on the loader.img file
+	 # run: hexdump loader.img to confirm it.
 
 xfer: .long target
 
@@ -147,7 +150,7 @@ done_e820:
 	 mov %eax, %ss
 	 mov $target, %eax
 	 mov $mb_info, %ebx
-	 jmp *entry
+	 jmp entry # jump to 'start32'
 
 .org 0x1fe
 .byte 0x55, 0xaa
