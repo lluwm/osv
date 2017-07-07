@@ -43,8 +43,6 @@ gdt_end = .
 .text
 .globl start32
 start32:
-     mov  %eax, %ebp
-check:
 	 lgdt gdt_desc
 	 movw $0x10, %ax #Segment Selector points to 64-bit code segment.
 	 movw %ax, %ds
