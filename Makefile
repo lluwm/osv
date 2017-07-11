@@ -33,7 +33,7 @@ clean:
 	 rm -f loader.elf loader.bin loader.img boot.bin
 
 qemu:
-	 qemu-system-x86_64 -hda loader.img -serial mon:stdio -gdb tcp::26000 -S -no-shutdown -no-reboot -d int
+	 /usr/bin/qemu-system-x86_64 -drive format=raw,file=loader.img -m 512 --enable-kvm -serial mon:stdio -gdb tcp::26000 -S -no-shutdown -no-reboot -d int
 
 qemu-run:
-	 qemu-system-x86_64 -hda loader.img -no-reboot -d int
+	 /usr/bin/qemu-system-x86_64 -drive format=raw,file=loader.img -m 512 --enable-kvm -no-reboot -d int -cpu host

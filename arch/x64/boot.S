@@ -54,6 +54,23 @@ start32:
 	 movw %ax, %ss
 	 ljmp $0x18, $1f #Use segment selecotr=0x18(32-bit code segment) to jump to label 1.
 1:
+    // Throw error if the CPU doesn't support Long Mode.
+    movl $0x80000000, %eax  // Set the A-register to 0x80000000.
+    cpuid                   // CPU identification.
+    cmp $0x80000001, %eax   // Compare the A-register with 0x80000001.
+    mov $'2', %al
+    jb no_long_mode         // It is less, there is no long mode.
+    movl $0x80000001, %eax  // Set the A-register to 0x80000001.
+    cpuid                   // CPU identification.
+    test $1 << 29, %edx     // Test if the LM-bit, which is bit 29, is set in the D-register.
+    mov $'3', %al
+    jz no_long_mode         // They aren't, there is no long mode.
+    test $1 << 6, %edx      // Test if the PAE, is set
+    mov $'4', %al
+    jz no_long_mode
+no_long_mode:
+    jmp error
+
 	 mov $0x000007b8, %eax
 	 mov %eax, %cr4         #CR4 = DE | PSE | *PAE* | PGE | PCE | OSFXSR | OSXMMEXCEPT
 	 lea ident_pt_l4, %eax
@@ -69,3 +86,12 @@ start32:
 .code64
 start64:
 	 jmp main 
+
+// Prints `ERR: ` and the given error code to screen and hangs.
+// parameter: error code (in ascii) in al
+error:
+    movl $0x4f524f45, (0xb8000)
+    movl $0x4f3a4f52, (0xb8004)
+    movl $0x4f204f20, (0xb8008)
+    movb %al, (0xb800a)
+    hlt
